@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Captain's Log – dein digitales Cockpit an Bord</title>
+<meta name="description" content="Captain's Log – das digitale Bordbuch für Segler.">
+<link rel="icon" href="logo-icon.png">
+<style>
+
+    :root {
+      --background: hsl(180 17% 98%);
+      --foreground: hsl(206 79% 15%);
+      --card: hsl(0 0% 100%);
+      --primary: hsl(200 89% 25%);
+      --primary-foreground: hsl(0 0% 100%);
+      --secondary: hsl(182 77% 36%);
+      --secondary-foreground: hsl(0 0% 100%);
+      --muted: hsl(40 45% 92%);
+      --muted-foreground: hsl(206 40% 40%);
+      --accent: hsl(176 44% 94%);
+      --accent-foreground: hsl(200 89% 25%);
+      --border: hsl(206 20% 90%);
+      --gold: hsl(38 62% 52%);
+      --gold-soft: hsl(38 70% 94%);
+      --dark-bg: hsl(206 45% 7%);
+      --dark-card: hsl(206 38% 13%);
+      --dark-border: hsl(206 25% 22%);
+      --dark-primary: hsl(182 70% 48%);
+      --dark-fg: hsl(206 15% 96%);
+      --shadow-soft: 0 1px 2px -1px hsl(206 79% 15% / 0.06), 0 2px 8px -4px hsl(206 79% 15% / 0.06);
+      --shadow-medium: 0 4px 14px -4px hsl(206 79% 15% / 0.10), 0 2px 6px -2px hsl(206 79% 15% / 0.06);
+      --shadow-strong: 0 16px 40px -12px hsl(206 79% 15% / 0.22), 0 4px 12px -4px hsl(206 79% 15% / 0.10);
+      --shadow-nav: 0 1px 0 hsl(206 40% 10% / 0.04), 0 8px 24px -12px hsl(206 40% 10% / 0.10);
+      --r-lg: 16px;
+      --r-md: 10px;
+      --r-sm: 6px;
+      --r-xl: 22px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--background);
+      color: var(--foreground);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { color: var(--secondary); }
+    h1, h2, h3 { margin: 0; letter-spacing: -0.02em; }
+    p { margin: 0; }
+    .wrap { max-width: 1160px; margin: 0 auto; padding: 0 32px; }
+    .eyebrow { font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--secondary); }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      height: 46px; padding: 0 28px; border-radius: var(--r-md);
+      font-size: 15px; font-weight: 600; white-space: nowrap;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      cursor: pointer; border: 1px solid transparent;
+    }
+    .btn-primary { background: var(--primary); color: var(--primary-foreground); box-shadow: var(--shadow-soft); }
+    .btn-primary:hover { background: hsl(200 89% 20%); transform: translateY(-1px); box-shadow: var(--shadow-medium); color: var(--primary-foreground); }
+    .btn-sm { height: 38px; padding: 0 18px; font-size: 14px; border-radius: var(--r-md); }
+    .badge {
+      display: inline-flex; align-items: center; gap: 7px; height: 26px; padding: 0 12px;
+      border-radius: 999px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .badge-beta { background: hsl(38 85% 94%); color: hsl(28 75% 34%); }
+    .badge-beta .badge-dot { background: hsl(32 85% 52%); }
+    .badge-live { background: hsl(182 55% 92%); color: hsl(182 77% 22%); }
+    .badge-live .badge-dot { background: hsl(158 60% 42%); }
+    .icon { display: block; }
+    section { position: relative; }
+    .nav-link { font-size: 14px; font-weight: 500; color: hsl(206 40% 40%); position: relative; }
+    .nav-link:hover { color: var(--primary); }
+    .lang-select {
+      font-size: 13px; font-weight: 600; color: hsl(206 40% 40%);
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm);
+      height: 34px; padding: 0 8px; cursor: pointer; transition: border-color 0.15s ease;
+    }
+    .lang-select:hover { border-color: var(--primary); color: var(--primary); }
+    .store-badge {
+      display: flex; align-items: center; gap: 10px; background: #000;
+      border: 1px solid hsl(0 0% 100% / 0.22); border-radius: var(--r-md); padding: 10px 20px;
+      cursor: pointer; transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .store-badge:hover { transform: translateY(-2px); border-color: hsl(0 0% 100% / 0.45); }
+    .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: var(--shadow-strong); }
+    .icon-chip {
+      width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(155deg, var(--accent), hsl(176 44% 90%));
+      border: 1px solid hsl(182 40% 84%);
+    }
+    .learn-link { font-size: 14.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; transition: gap 0.15s ease; }
+    .learn-link:hover { gap: 10px; }
+    @media (max-width: 860px) {
+      .wrap { padding: 0 20px; }
+      .hide-mobile { display: none !important; }
+      .hero-h1 { font-size: 36px !important; line-height: 1.14 !important; }
+      .grid-3 { grid-template-columns: 1fr !important; }
+      .grid-2 { grid-template-columns: 1fr !important; }
+      .grid-6 { grid-template-columns: repeat(2, 1fr) !important; }
+      .grid-footer { grid-template-columns: 1fr !important; gap: 32px !important; }
+    }
+  
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script id="tpl" type="text/x-template">
+<!-- NAV -->
+<div style="position: sticky; top: 0; z-index: 20; background: hsl(180 17% 98% / 0.92); backdrop-filter: blur(10px); box-shadow: var(--shadow-nav);">
+  <div class="wrap" style="display: flex; align-items: center; justify-content: space-between; height: 76px;">
+    <div style="display: flex; align-items: center; gap: 11px;">
+      <img src="logo-icon.png" alt="" style="width: 32px; height: 32px; object-fit: contain;">
+      <span style="font-size: 17.5px; font-weight: 800; color: var(--foreground); letter-spacing: -0.01em;">Captain&#39;s Log</span>
+    </div>
+    <div class="hide-mobile" style="display: flex; align-items: center; gap: 34px;">
+      <a class="nav-link" href="#funktionen">{{navFeatures}}</a>
+      <a class="nav-link" href="#chartplotter">{{chartplotterName}}</a>
+      <a class="nav-link" href="#smartboat">Smart-Boat</a>
+      <a class="nav-link" href="#anleitungen">{{navGuides}}</a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <select class="lang-select" value="de" aria-label="Sprache / Language">
+        <option value="de">DE</option>
+        <option value="en">EN</option>
+        <option value="es">ES</option>
+        <option value="fr">FR</option>
+        <option value="it">IT</option>
+        <option value="nl">NL</option>
+        <option value="pt">PT</option>
+      </select>
+      <a href="#download" class="btn btn-primary btn-sm">{{navGetApp}}</a>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section style="background: linear-gradient(155deg, hsl(200 89% 21%), hsl(202 72% 14%) 50%, hsl(182 62% 17%)); overflow: hidden;">
+  <div style="position: absolute; inset: 0; opacity: 0.5; background: radial-gradient(ellipse 640px 420px at 84% 8%, hsl(182 70% 40% / 0.28), transparent 70%), radial-gradient(ellipse 520px 380px at 6% 92%, hsl(200 89% 40% / 0.22), transparent 70%);"></div>
+  <div class="wrap" style="padding-top: 96px; padding-bottom: 80px; display: flex; justify-content: center; position: relative; z-index: 1;">
+    <div style="max-width: 640px; width: 100%;">
+      <div style="display: inline-flex; align-items: center; gap: 8px; background: hsl(0 0% 100% / 0.08); border: 1px solid hsl(0 0% 100% / 0.18); border-radius: 999px; padding: 7px 16px; margin-bottom: 26px;">
+        <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="hsl(38 75% 62%)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.2H22l-6 4.6 2.3 7.2-6.3-4.6-6.3 4.6 2.3-7.2-6-4.6h7.6z"/></svg>
+        <span style="font-size: 13px; font-weight: 600; color: hsl(180 30% 92%);">{{heroBadge}}</span>
+      </div>
+      <h1 class="hero-h1" style="font-size: 54px; line-height: 1.06; color: #fff; font-weight: 800; max-width: 620px;">
+        {{heroH1}}
+      </h1>
+      <p style="margin-top: 24px; font-size: 18.5px; line-height: 1.62; color: hsl(200 25% 85%); max-width: 560px;">
+        {{heroSubtitle}}
+      </p>
+      <div style="display: flex; gap: 12px; margin-top: 36px; flex-wrap: wrap;">
+        <a href="https://app.captainlog.pro/" class="store-badge">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8.98-.19 1.93-.87 2.95-.79 1.42.11 2.4.67 3.05 1.6-2.68 1.63-2.03 5.5.62 6.55-.5 1.31-1.14 2.6-1.7 4.81zM12.03 7.25c-.15-2.23 1.66-4.09 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+          <div style="line-height: 1.15;">
+            <div style="font-size: 10px; color: hsl(0 0% 100% / 0.7);">{{badgeDownloadOn}}</div>
+            <div style="font-size: 15px; font-weight: 700; color: #fff;">App Store</div>
+          </div>
+        </a>
+        <a href="https://play.google.com/store/apps/details?id=com.harborstudios.captainslog" class="store-badge">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3.6 2.9c-.4.3-.6.8-.6 1.4v15.4c0 .6.2 1.1.6 1.4l.1.1L13 12v-.2L3.7 2.8l-.1.1z" fill="#00d4ff"/><path d="M16.1 15 13 12v-.2l3.1-3.1 3.5 2c1 .6 1 1.5 0 2.1z" fill="#ffcf00"/><path d="M13 12l3.1 3-9.5 5.4c-.5.3-1 .3-1.4 0z" fill="#ff3a44"/><path d="M13 12 3.6 2.9c.4-.3.9-.3 1.4 0L16.1 9z" fill="#00e676"/></svg>
+          <div style="line-height: 1.15;">
+            <div style="font-size: 10px; color: hsl(0 0% 100% / 0.7);">{{badgeGetOn}}</div>
+            <div style="font-size: 15px; font-weight: 700; color: #fff;">Google Play</div>
+          </div>
+        </a>
+      </div>
+      <p style="margin-top: 16px; font-size: 13.5px; color: hsl(200 25% 78%);">{{heroTrackingNote}}</p>
+      <div style="margin-top: 16px;">
+        <a href="https://app.captainlog.pro/" style="font-size: 13.5px; font-weight: 600; color: hsl(200 25% 80%); border-bottom: 1px solid hsl(200 25% 45%);">{{heroWebLink}}</a>
+      </div>
+    </div>
+  </div>
+  <svg viewBox="0 0 1440 64" style="display: block; width: 100%; height: 50px;" preserveAspectRatio="none">
+    <path d="M0,34 C240,64 480,4 720,30 C960,56 1200,8 1440,32 L1440,64 L0,64 Z" fill="hsl(180 17% 98%)"></path>
+  </svg>
+</section>
+
+<!-- DREI SÄULEN -->
+<section id="funktionen" style="padding: 12px 0 96px;">
+  <div class="wrap">
+    <div style="text-align: center; max-width: 640px; margin: 0 auto;">
+      <span class="eyebrow">Captain&#39;s Log</span>
+      <h2 style="font-size: 32px; font-weight: 800; margin-top: 10px;">{{pillarsH2}}</h2>
+    </div>
+    <div class="grid-3" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-top: 52px;">
+
+      <div class="card-hover" style="background: var(--card); border: 1px solid var(--border); border-radius: var(--r-xl); padding: 30px; box-shadow: var(--shadow-soft);">
+        <div class="icon-chip">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="hsl(200 89% 25%)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16"/><path d="M6 19V9l6-4 6 4v10"/><path d="M10 19v-6h4v6"/></svg>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-top: 18px; margin-bottom: 10px;">
+          <h3 style="font-size: 18px; font-weight: 700;">{{pillar1Title}}</h3>
+          <span class="badge badge-live"><span class="badge-dot"></span>{{badgeAvailable}}</span>
+        </div>
+        <p style="font-size: 14.5px; line-height: 1.6; color: var(--muted-foreground);">{{pillar1Desc}}</p>
+      </div>
+
+      <div class="card-hover" style="background: var(--card); border: 1px solid var(--border); border-radius: var(--r-xl); padding: 30px; box-shadow: var(--shadow-soft);">
+        <div class="icon-chip">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="hsl(200 89% 25%)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-top: 18px; margin-bottom: 10px;">
+          <h3 style="font-size: 18px; font-weight: 700;">{{chartplotterName}}</h3>
+          <span class="badge badge-beta"><span class="badge-dot"></span>Beta</span>
+        </div>
+        <p style="font-size: 14.5px; line-height: 1.6; color: var(--muted-foreground);">{{pillar2Desc}}</p>
+      </div>
+
+      <div class="card-hover" style="background: var(--card); border: 1px solid var(--border); border-radius: var(--r-xl); padding: 30px; box-shadow: var(--shadow-soft);">
+        <div class="icon-chip">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="hsl(200 89% 25%)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h8l-1 8 10-12h-8z"/></svg>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-top: 18px; margin-bottom: 10px;">
+          <h3 style="font-size: 18px; font-weight: 700;">Smart-Boat</h3>
+          <span class="badge badge-beta"><span class="badge-dot"></span>Beta</span>
+        </div>
+        <p style="font-size: 14.5px; line-height: 1.6; color: var(--muted-foreground);">{{pillar3Desc}}</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE GRID (Kernfunktionen) -->
+<section style="background: var(--muted); padding: 90px 0;">
+  <div class="wrap">
+    <h2 style="font-size: 28px; font-weight: 800; text-align: center;">{{featureGridH2}}</h2>
+    <div class="grid-6" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 48px;">
+
+      <div class="card-hover" style="background: var(--card); border-radius: var(--r-lg); padding: 26px; box-shadow: var(--shadow-soft);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="hsl(182 77% 32%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <h3 style="font-size: 15.5px; font-weight: 700; margin-bottom: 6px;">{{feat1Title}}</h3>
+        <p style="font-size: 13.5px; line-height: 1.55; color: var(--muted-foreground);">{{feat1Desc}}</p>
+      </div>
+
+      <div class="card-hover" style="background: var(--card); border-radius: var(--r-lg); padding: 26px; box-shadow: var(--shadow-soft);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="hsl(182 77% 32%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;"><path d="M9 20l-5.5-2V4L9 6m0 14l6-2m-6 2V6m6 12l5.5 2V6L15 4m0 14V4m0 0L9 6"/></svg>
+        <h3 style="font-size: 15.5px; font-weight: 700; margin-bottom: 6px;">{{feat2Title}}</h3>
+        <p style="font-size: 13.5px; line-height: 1.55; color: var(--muted-foreground);">{{feat2Desc}}</p>
+      </div>
+
+      <div class="card-hover" style="background: var(--card); border-radius: var(--r-lg); padding: 26px; box-shadow: var(--shadow-soft);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="hsl(182 77% 32%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;"><path d="M12 2v4"/><path d="M12 22v-8"/><path d="M4.9 10a7 7 0 0 1 14.2 0"/><path d="M2 10h4"/><path d="M18 10h4"/></svg>
+        <h3 style="font-size: 15.5px; font-weight: 700; margin-bottom: 6px;">{{feat3Title}}</h3>
+        <p style="font-size: 13.5px; line-height: 1.55; color: var(--muted-foreground);">{{feat3Desc}}</p>
+      </div>
+
+      <div class="card-hover" style="background: var(--card); border-radius: var(--r-lg); padding: 26px; box-shadow: var(--shadow-soft);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="hsl(182 77% 32%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;"><path d="M14.7 6.3a1 1 0 0 0 1.4 0l1.6-1.6a1 1 0 0 0 0-1.4l-1.6-1.6a1 1 0 0 0-1.4 0L13.1 3.3a1 1 0 0 0 0 1.4z"/><path d="m10.5 7.5-8 8a2.1 2.1 0 1 0 3 3l8-8"/><path d="m16 8 2 2"/></svg>
+        <h3 style="font-size: 15.5px; font-weight: 700; margin-bottom: 6px;">{{feat4Title}}</h3>
+        <p style="font-size: 13.5px; line-height: 1.55; color: var(--muted-foreground);">{{feat4Desc}}</p>
+      </div>
+
+      <div class="card-hover" style="background: var(--card); border-radius: var(--r-lg); padding: 26px; box-shadow: var(--shadow-soft);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="hsl(182 77% 32%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <h3 style="font-size: 15.5px; font-weight: 700; margin-bottom: 6px;">{{feat5Title}}</h3>
+        <p style="font-size: 13.5px; line-height: 1.55; color: var(--muted-foreground);">{{feat5Desc}}</p>
+      </div>
+
+      <div class="card-hover" style="background: var(--card); border-radius: var(--r-lg); padding: 26px; box-shadow: var(--shadow-soft);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="hsl(182 77% 32%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/><path d="m9 12 2 2 4-4"/></svg>
+        <h3 style="font-size: 15.5px; font-weight: 700; margin-bottom: 6px;">{{feat6Title}}</h3>
+        <p style="font-size: 13.5px; line-height: 1.55; color: var(--muted-foreground);">{{feat6Desc}}</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CHARTPLOTTER DEEP DIVE -->
+<section id="chartplotter" style="padding: 104px 0;">
+  <div class="wrap" style="max-width: 680px; text-align: center;">
+    <span class="badge badge-beta"><span class="badge-dot"></span>Beta</span>
+    <h2 style="font-size: 32px; font-weight: 800; margin-top: 18px;">{{chartplotterName}}</h2>
+    <p style="font-size: 16px; line-height: 1.65; color: var(--muted-foreground); margin-top: 16px;">
+      {{chartplotterDesc}}
+    </p>
+    <div style="margin-top: 26px;">
+      <a href="/chartplotter" class="learn-link" style="justify-content: center;">{{learnMore}}
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- SMART-BOAT DEEP DIVE -->
+<section id="smartboat" style="background: var(--accent); padding: 104px 0;">
+  <div class="wrap" style="max-width: 680px; text-align: center;">
+    <span class="badge badge-beta"><span class="badge-dot"></span>Beta</span>
+    <h2 style="font-size: 32px; font-weight: 800; margin-top: 18px;">Smart-Boat</h2>
+    <p style="font-size: 16px; line-height: 1.65; color: hsl(200 40% 22%); margin-top: 16px;">
+      {{smartboatDesc}}
+    </p>
+    <div style="margin-top: 26px;">
+      <a href="/smartboat" class="learn-link" style="justify-content: center;">{{learnMore}}
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ANLEITUNGEN TEASER -->
+<section id="anleitungen" style="padding: 96px 0;">
+  <div class="wrap" style="text-align: center;">
+    <span class="badge" style="background: var(--muted); color: var(--muted-foreground);"><span class="badge-dot" style="background: hsl(206 20% 55%);"></span>{{badgeInPrep}}</span>
+    <h2 style="font-size: 28px; font-weight: 800; margin-top: 18px;">{{guidesH2}}</h2>
+    <p style="font-size: 15.5px; line-height: 1.6; color: var(--muted-foreground); max-width: 480px; margin: 14px auto 0;">
+      {{guidesDesc}}
+    </p>
+  </div>
+</section>
+
+<!-- DOWNLOAD CTA -->
+<section id="download" style="background: linear-gradient(135deg, hsl(200 89% 21%), hsl(182 68% 22%)); padding: 84px 0; overflow: hidden;">
+  <div style="position: absolute; inset: 0; opacity: 0.6; background: radial-gradient(ellipse 600px 340px at 50% 0%, hsl(182 70% 40% / 0.25), transparent 70%);"></div>
+  <div class="wrap" style="text-align: center; position: relative;">
+    <h2 style="font-size: 30px; font-weight: 800; color: #fff;">{{ctaH2}}</h2>
+    <p style="font-size: 15.5px; color: hsl(200 25% 85%); margin-top: 12px;">{{ctaDesc}}</p>
+    <div style="display: flex; gap: 12px; justify-content: center; margin-top: 32px; flex-wrap: wrap;">
+      <a href="https://app.captainlog.pro/" class="store-badge">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8.98-.19 1.93-.87 2.95-.79 1.42.11 2.4.67 3.05 1.6-2.68 1.63-2.03 5.5.62 6.55-.5 1.31-1.14 2.6-1.7 4.81zM12.03 7.25c-.15-2.23 1.66-4.09 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+        <div style="line-height: 1.15; text-align: left;">
+          <div style="font-size: 10px; color: hsl(0 0% 100% / 0.7);">{{badgeDownloadOn}}</div>
+          <div style="font-size: 15px; font-weight: 700; color: #fff;">App Store</div>
+        </div>
+      </a>
+      <a href="https://play.google.com/store/apps/details?id=com.harborstudios.captainslog" class="store-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3.6 2.9c-.4.3-.6.8-.6 1.4v15.4c0 .6.2 1.1.6 1.4l.1.1L13 12v-.2L3.7 2.8l-.1.1z" fill="#00d4ff"/><path d="M16.1 15 13 12v-.2l3.1-3.1 3.5 2c1 .6 1 1.5 0 2.1z" fill="#ffcf00"/><path d="M13 12l3.1 3-9.5 5.4c-.5.3-1 .3-1.4 0z" fill="#ff3a44"/><path d="M13 12 3.6 2.9c.4-.3.9-.3 1.4 0L16.1 9z" fill="#00e676"/></svg>
+        <div style="line-height: 1.15; text-align: left;">
+          <div style="font-size: 10px; color: hsl(0 0% 100% / 0.7);">{{badgeGetOn}}</div>
+          <div style="font-size: 15px; font-weight: 700; color: #fff;">Google Play</div>
+        </div>
+      </a>
+    </div>
+    <div style="margin-top: 22px;">
+      <a href="https://app.captainlog.pro/" style="font-size: 13.5px; font-weight: 600; color: hsl(200 25% 80%); border-bottom: 1px solid hsl(200 25% 45%);">{{heroWebLink}}</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="background: var(--dark-bg); padding: 68px 0 32px;">
+  <div class="wrap">
+    <div class="grid-footer" style="display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 40px; padding-bottom: 44px; border-bottom: 1px solid var(--dark-border);">
+      <div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+          <img src="logo-icon.png" alt="" style="width: 28px; height: 28px; object-fit: contain;">
+          <span style="font-size: 15px; font-weight: 700; color: var(--dark-fg);">Captain&#39;s Log</span>
+        </div>
+        <p style="font-size: 13.5px; line-height: 1.6; color: hsl(206 20% 60%); max-width: 280px;">{{footerTagline}}</p>
+      </div>
+      <div>
+        <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: hsl(206 20% 48%); margin-bottom: 16px;">{{footerProductHeading}}</div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <a href="#funktionen" style="font-size: 13.5px; color: hsl(206 20% 68%);">{{navFeatures}}</a>
+          <a href="#chartplotter" style="font-size: 13.5px; color: hsl(206 20% 68%);">{{chartplotterName}}</a>
+          <a href="#smartboat" style="font-size: 13.5px; color: hsl(206 20% 68%);">Smart-Boat</a>
+          <a href="#anleitungen" style="font-size: 13.5px; color: hsl(206 20% 68%);">{{navGuides}}</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: hsl(206 20% 48%); margin-bottom: 16px;">{{footerLegalHeading}}</div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <a href="https://app.captainlog.pro/impressum" style="font-size: 13.5px; color: hsl(206 20% 68%);">{{footerImprint}}</a>
+          <a href="https://app.captainlog.pro/datenschutz" style="font-size: 13.5px; color: hsl(206 20% 68%);">{{footerPrivacy}}</a>
+          <a href="#anleitungen" style="font-size: 13.5px; color: hsl(206 20% 68%);">{{footerManual}}</a>
+          <a href="mailto:support@harborstudios.app" style="font-size: 13.5px; color: hsl(206 20% 68%);">{{footerContact}}</a>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 24px;">
+      <span style="font-size: 12.5px; color: hsl(206 20% 45%);">&copy; 2026 Harbor Studios</span>
+      <span style="font-size: 12.5px; color: hsl(206 20% 40%);">Costa Calma, Spanien</span>
+    </div>
+  </div>
+</footer>
+</script>
+<script>
+var T = {
+  navFeatures: { de: 'Funktionen', en: 'Features', es: 'Funciones', fr: 'Fonctionnalités', it: 'Funzionalità', nl: 'Functies', pt: 'Funcionalidades' },
+  navGuides: { de: 'Anleitungen', en: 'Guides', es: 'Guías', fr: 'Guides', it: 'Guide', nl: 'Handleidingen', pt: 'Guias' },
+  navGetApp: { de: 'App laden', en: 'Get the App', es: 'Obtener la app', fr: 'Télécharger l\'app', it: 'Scarica l\'app', nl: 'App downloaden', pt: 'Obter a app' },
+  chartplotterName: { de: 'Chartplotter', en: 'Chartplotter', es: 'Cartógrafo', fr: 'Traceur de cartes', it: 'Chartplotter', nl: 'Kaartplotter', pt: 'Chartplotter' },
+  heroBadge: { de: 'Für Skipper & Bootseigner gemacht', en: 'Made for skippers & boat owners', es: 'Hecho para patrones y armadores', fr: 'Conçu pour skippers et propriétaires de bateaux', it: 'Pensato per skipper e armatori', nl: 'Gemaakt voor schippers & booteigenaren', pt: 'Feito para skippers e proprietários de embarcações' },
+  heroH1: {
+    de: 'Captain\'s Log – dein digitales Cockpit an Bord',
+    en: 'Captain\'s Log – your digital cockpit on board',
+    es: 'Captain\'s Log – tu cabina digital a bordo',
+    fr: 'Captain\'s Log – votre cockpit numérique à bord',
+    it: 'Captain\'s Log – il tuo cockpit digitale a bordo',
+    nl: 'Captain\'s Log – jouw digitale cockpit aan boord',
+    pt: 'Captain\'s Log – o teu cockpit digital a bordo',
+  },
+  heroSubtitle: {
+    de: 'Das digitale Bordbuch für Segler. Captain\'s Log ist die moderne Segel-App für Skipper und Bootseigner: Reisen, Wartung, Dokumente, Crew und Ankerwache – alles zentral an einem Ort, in deinem digitalen Cockpit an Bord.',
+    en: 'The digital logbook for sailors. Captain\'s Log is the modern sailing app for skippers and boat owners: voyages, maintenance, documents, crew, and anchor watch – all in one place, in your digital cockpit on board.',
+    es: 'El diario de a bordo digital para navegantes. Captain\'s Log es la app de navegación moderna para patrones y armadores: travesías, mantenimiento, documentos, tripulación y vigilancia de ancla – todo centralizado en un solo lugar, en tu cabina digital a bordo.',
+    fr: 'Le journal de bord numérique pour navigateurs. Captain\'s Log est l\'application de navigation moderne pour skippers et propriétaires de bateaux : navigations, entretien, documents, équipage et surveillance du mouillage – tout centralisé au même endroit, dans votre cockpit numérique à bord.',
+    it: 'Il diario di bordo digitale per velisti. Captain\'s Log è l\'app di navigazione moderna per skipper e armatori: navigazioni, manutenzione, documenti, equipaggio e sorveglianza dell\'ancoraggio – tutto centralizzato in un unico posto, nel tuo cockpit digitale a bordo.',
+    nl: 'Het digitale logboek voor zeilers. Captain\'s Log is de moderne zeil-app voor schippers en booteigenaren: tochten, onderhoud, documenten, bemanning en ankerbewaking – alles centraal op één plek, in jouw digitale cockpit aan boord.',
+    pt: 'O diário de bordo digital para velejadores. Captain\'s Log é a app de navegação moderna para skippers e proprietários de embarcações: viagens, manutenção, documentos, tripulação e vigilância de âncora – tudo centralizado num só lugar, no teu cockpit digital a bordo.',
+  },
+  badgeDownloadOn: { de: 'Laden im', en: 'Download on the', es: 'Disponible en', fr: 'Disponible sur', it: 'Disponibile su', nl: 'Beschikbaar in de', pt: 'Disponível na' },
+  badgeGetOn: { de: 'Jetzt bei', en: 'Get it on', es: 'Disponible en', fr: 'Disponible sur', it: 'Disponibile su', nl: 'Beschikbaar op', pt: 'Disponível no' },
+  heroTrackingNote: { de: 'Für Live-Tracking, auch offline auf See.', en: 'For live tracking, even offline at sea.', es: 'Para seguimiento en vivo, también sin conexión en el mar.', fr: 'Pour le suivi en direct, même hors ligne en mer.', it: 'Per il tracciamento live, anche offline in mare.', nl: 'Voor live tracking, ook offline op zee.', pt: 'Para rastreamento em tempo real, mesmo offline no mar.' },
+  heroWebLink: {
+    de: 'Nur verwalten? Im Browser starten (ohne Live-Tracking)',
+    en: 'Just managing? Start in your browser (without live tracking)',
+    es: '¿Solo gestionar? Empieza en el navegador (sin seguimiento en vivo)',
+    fr: 'Juste gérer ? Démarrer dans le navigateur (sans suivi en direct)',
+    it: 'Solo gestione? Inizia nel browser (senza tracciamento live)',
+    nl: 'Alleen beheren? Start in de browser (zonder live tracking)',
+    pt: 'Só gerir? Começa no navegador (sem rastreamento em tempo real)',
+  },
+  pillarsH2: {
+    de: 'Drei Wege, wie Captain\'s Log an Bord hilft',
+    en: 'Three ways Captain\'s Log helps on board',
+    es: 'Tres formas en que Captain\'s Log ayuda a bordo',
+    fr: 'Trois façons dont Captain\'s Log aide à bord',
+    it: 'Tre modi in cui Captain\'s Log aiuta a bordo',
+    nl: 'Drie manieren waarop Captain\'s Log aan boord helpt',
+    pt: 'Três formas como o Captain\'s Log ajuda a bordo',
+  },
+  badgeAvailable: { de: 'Verfügbar', en: 'Available', es: 'Disponible', fr: 'Disponible', it: 'Disponibile', nl: 'Beschikbaar', pt: 'Disponível' },
+  badgeInPrep: { de: 'In Vorbereitung', en: 'Coming soon', es: 'Próximamente', fr: 'Bientôt disponible', it: 'In arrivo', nl: 'Binnenkort', pt: 'Em breve' },
+  pillar1Title: { de: 'Logbuch & Bordmanagement', en: 'Logbook & Onboard Management', es: 'Cuaderno de bitácora y gestión', fr: 'Journal de bord et gestion', it: 'Giornale di bordo e gestione', nl: 'Logboek & Boordbeheer', pt: 'Diário de bordo e gestão' },
+  pillar1Desc: {
+    de: 'Reisen, Wartung, Dokumente, Crew und Ankerwache – digital erfasst und immer griffbereit.',
+    en: 'Voyages, maintenance, documents, crew, and anchor watch – recorded digitally and always at hand.',
+    es: 'Travesías, mantenimiento, documentos, tripulación y vigilancia de ancla – todo digital y siempre a mano.',
+    fr: 'Navigations, entretien, documents, équipage et surveillance du mouillage – tout numérique et toujours à portée de main.',
+    it: 'Navigazioni, manutenzione, documenti, equipaggio e sorveglianza dell\'ancoraggio – tutto digitale e sempre a portata di mano.',
+    nl: 'Tochten, onderhoud, documenten, bemanning en ankerbewaking – digitaal vastgelegd en altijd binnen handbereik.',
+    pt: 'Viagens, manutenção, documentos, tripulação e vigilância de âncora – tudo digital e sempre à mão.',
+  },
+  pillar2Desc: {
+    de: 'Navigation und Windvorhersage an Bord – direkt in deiner Captain\'s-Log-App.',
+    en: 'Navigation and wind forecasts on board – right in your Captain\'s Log app.',
+    es: 'Navegación y previsión de viento a bordo – directamente en tu app Captain\'s Log.',
+    fr: 'Navigation et prévisions de vent à bord – directement dans votre app Captain\'s Log.',
+    it: 'Navigazione e previsioni del vento a bordo – direttamente nella tua app Captain\'s Log.',
+    nl: 'Navigatie en windvoorspelling aan boord – direct in je Captain\'s Log-app.',
+    pt: 'Navegação e previsão de vento a bordo – diretamente na tua app Captain\'s Log.',
+  },
+  pillar3Desc: {
+    de: 'Steuere Pumpen, Licht und Technik direkt per App – dein Boot wird smart.',
+    en: 'Control pumps, lights, and equipment right from the app – your boat goes smart.',
+    es: 'Controla bombas, luces y equipos directamente desde la app – tu barco se vuelve inteligente.',
+    fr: 'Contrôlez pompes, éclairage et équipements directement depuis l\'app – votre bateau devient intelligent.',
+    it: 'Controlla pompe, luci e impianti direttamente dall\'app – la tua barca diventa smart.',
+    nl: 'Bedien pompen, verlichting en techniek direct via de app – jouw boot wordt smart.',
+    pt: 'Controla bombas, luzes e equipamentos diretamente pela app – o teu barco torna-se inteligente.',
+  },
+  featureGridH2: { de: 'Alles für dein Logbuch, an einem Ort', en: 'Everything for your logbook, in one place', es: 'Todo para tu diario de a bordo, en un solo lugar', fr: 'Tout pour votre journal de bord, au même endroit', it: 'Tutto per il tuo giornale di bordo, in un unico posto', nl: 'Alles voor jouw logboek, op één plek', pt: 'Tudo para o teu diário de bordo, num só lugar' },
+  feat1Title: { de: 'Digitales Bordbuch', en: 'Digital Logbook', es: 'Cuaderno de bitácora digital', fr: 'Journal de bord numérique', it: 'Giornale di bordo digitale', nl: 'Digitaal logboek', pt: 'Diário de bordo digital' },
+  feat1Desc: { de: 'Dokumentiere jede Reise revisionssicher mit GPS-Track, Wetterdaten und Logbuch-Einträgen.', en: 'Document every voyage with GPS tracks, weather data, and revision-safe log entries.', es: 'Documenta cada travesía con tracks GPS, datos meteorológicos y entradas de diario.', fr: 'Documentez chaque navigation avec traces GPS, données météo et entrées de journal.', it: 'Documenta ogni navigazione con tracce GPS, dati meteo e registrazioni di bordo.', nl: 'Documenteer elke tocht met GPS-tracks, weerdata en logboeknotities.', pt: 'Documenta cada viagem com tracks GPS, dados meteorológicos e registos de bordo.' },
+  feat2Title: { de: 'Reise-Logbuch', en: 'Voyage Log', es: 'Diario de travesías', fr: 'Carnet de navigation', it: 'Diario di navigazione', nl: 'Tochtlogboek', pt: 'Diário de viagens' },
+  feat2Desc: { de: 'Plane und verwalte Reisen mit Crew, Segelstellung, Kurs und detaillierten Ereignissen.', en: 'Plan and manage voyages with crew, sail settings, course, and detailed events.', es: 'Planifica y gestiona travesías con tripulación, velas, rumbo y eventos detallados.', fr: 'Planifiez et gérez vos navigations avec équipage, voiles, cap et événements détaillés.', it: 'Pianifica e gestisci navigazioni con equipaggio, vele, rotta ed eventi dettagliati.', nl: 'Plan en beheer tochten met bemanning, zeilen, koers en gedetailleerde gebeurtenissen.', pt: 'Planeia e gere viagens com tripulação, velas, rumo e eventos detalhados.' },
+  feat3Title: { de: 'GPS-Ankerwache', en: 'GPS Anchor Watch', es: 'Vigilancia de ancla GPS', fr: 'Surveillance de mouillage GPS', it: 'Sorveglianza ancoraggio GPS', nl: 'GPS-ankerbewaking', pt: 'Vigilância de âncora GPS' },
+  feat3Desc: { de: 'Überwache deine Ankerposition in Echtzeit und werde sofort alarmiert, wenn das Boot abtreibt.', en: 'Monitor your anchor position in real time and get instant alerts if the boat drags.', es: 'Monitoriza la posición del ancla en tiempo real y recibe alertas si el barco garrea.', fr: 'Surveillez votre position de mouillage en temps réel et soyez alerté si le bateau chasse.', it: 'Monitora la posizione dell\'ancora in tempo reale e ricevi avvisi se la barca ara.', nl: 'Monitor je ankerpositie real-time en ontvang direct een alarm als de boot kruit.', pt: 'Monitoriza a posição da âncora em tempo real e recebe alertas se o barco garrar.' },
+  feat4Title: { de: 'Wartungsplaner', en: 'Maintenance Planner', es: 'Planificador de mantenimiento', fr: 'Planificateur d\'entretien', it: 'Pianificatore manutenzione', nl: 'Onderhoudsplanner', pt: 'Planeador de manutenção' },
+  feat4Desc: { de: 'Behalte alle Wartungsintervalle im Blick – mit automatischen Erinnerungen für Motor, Rigg und Technik.', en: 'Keep track of all maintenance intervals with automatic reminders for engine, rig, and systems.', es: 'Controla todos los intervalos de mantenimiento con recordatorios automáticos.', fr: 'Suivez tous les intervalles d\'entretien avec des rappels automatiques.', it: 'Tieni sotto controllo tutti gli intervalli di manutenzione con promemoria automatici.', nl: 'Houd alle onderhoudsintervallen bij met automatische herinneringen.', pt: 'Controla todos os intervalos de manutenção com lembretes automáticos.' },
+  feat5Title: { de: 'Crew- & Dokumentenverwaltung', en: 'Crew & Document Management', es: 'Gestión de tripulación y documentos', fr: 'Gestion équipage & documents', it: 'Gestione equipaggio e documenti', nl: 'Bemanning- & documentbeheer', pt: 'Gestão de tripulação e documentos' },
+  feat5Desc: { de: 'Verwalte Crew-Daten, Notfallkontakte, Bootsdokumente und Versicherungen an einem Ort.', en: 'Manage crew data, emergency contacts, boat documents, and insurance in one place.', es: 'Gestiona datos de tripulación, contactos de emergencia, documentos y seguros.', fr: 'Gérez les données d\'équipage, contacts d\'urgence, documents et assurances.', it: 'Gestisci dati dell\'equipaggio, contatti d\'emergenza, documenti e assicurazioni.', nl: 'Beheer bemanningsgegevens, noodcontacten, bootdocumenten en verzekeringen.', pt: 'Gere dados da tripulação, contactos de emergência, documentos e seguros.' },
+  feat6Title: { de: 'Sicherheits-Checklisten', en: 'Safety Checklists', es: 'Listas de verificación de seguridad', fr: 'Checklists de sécurité', it: 'Checklist di sicurezza', nl: 'Veiligheidschecklists', pt: 'Checklists de segurança' },
+  feat6Desc: { de: 'Standardisierte und eigene Checklisten für Abfahrt, Sicherheit und Manöver an Bord.', en: 'Standard and custom checklists for departure, safety, and manoeuvres on board.', es: 'Listas estándar y personalizadas para salida, seguridad y maniobras a bordo.', fr: 'Checklists standard et personnalisées pour départ, sécurité et manœuvres à bord.', it: 'Checklist standard e personalizzate per partenza, sicurezza e manovre a bordo.', nl: 'Standaard- en eigen checklists voor vertrek, veiligheid en manoeuvres aan boord.', pt: 'Checklists padrão e personalizadas para partida, segurança e manobras a bordo.' },
+  chartplotterDesc: {
+    de: 'Navigation und Windvorhersage an Bord – direkt in Captain\'s Log. Der Chartplotter wächst in der Beta-Phase laufend weiter und wird direkt in die App integriert, ohne separate Anwendung.',
+    en: 'Navigation and wind forecasts on board – built right into Captain\'s Log. The chartplotter keeps growing throughout its beta phase and is integrated directly into the app, with no separate application needed.',
+    es: 'Navegación y previsión de viento a bordo – directamente en Captain\'s Log. El cartógrafo sigue creciendo durante la fase beta y se integra directamente en la app, sin aplicación aparte.',
+    fr: 'Navigation et prévisions de vent à bord – intégrées directement dans Captain\'s Log. Le traceur de cartes continue d\'évoluer pendant la phase bêta et s\'intègre directement dans l\'app, sans application séparée.',
+    it: 'Navigazione e previsioni del vento a bordo – direttamente in Captain\'s Log. Il chartplotter continua a crescere durante la fase beta ed è integrato direttamente nell\'app, senza applicazione separata.',
+    nl: 'Navigatie en windvoorspelling aan boord – rechtstreeks in Captain\'s Log. De kaartplotter blijft tijdens de bètafase doorgroeien en wordt direct in de app geïntegreerd, zonder aparte toepassing.',
+    pt: 'Navegação e previsão de vento a bordo – diretamente no Captain\'s Log. O chartplotter continua a crescer durante a fase beta e é integrado diretamente na app, sem aplicação separada.',
+  },
+  learnMore: { de: 'Mehr erfahren', en: 'Learn more', es: 'Más información', fr: 'En savoir plus', it: 'Scopri di più', nl: 'Meer weten', pt: 'Saiba mais' },
+  smartboatDesc: {
+    de: 'Steuere Pumpen, Licht und Technik direkt per App. Captain\'s Log verbindet sich mit deiner eigenen Smart-Boat-Box und macht Schalter und Verbraucher an Bord fernsteuerbar – aktuell in aktiver Entwicklung.',
+    en: 'Control pumps, lights, and equipment right from the app. Captain\'s Log connects to your own Smart-Boat box and makes switches and consumers on board remotely controllable – currently in active development.',
+    es: 'Controla bombas, luces y equipos directamente desde la app. Captain\'s Log se conecta con tu propia caja Smart-Boat y hace que los interruptores y consumidores a bordo sean controlables a distancia – actualmente en desarrollo activo.',
+    fr: 'Contrôlez pompes, éclairage et équipements directement depuis l\'app. Captain\'s Log se connecte à votre propre boîtier Smart-Boat et rend les interrupteurs et consommateurs à bord contrôlables à distance – actuellement en développement actif.',
+    it: 'Controlla pompe, luci e impianti direttamente dall\'app. Captain\'s Log si collega alla tua Smart-Boat box e rende interruttori e utenze a bordo controllabili a distanza – attualmente in sviluppo attivo.',
+    nl: 'Bedien pompen, verlichting en techniek direct via de app. Captain\'s Log verbindt met jouw eigen Smart-Boat-box en maakt schakelaars en verbruikers aan boord op afstand bestuurbaar – momenteel in actieve ontwikkeling.',
+    pt: 'Controla bombas, luzes e equipamentos diretamente pela app. O Captain\'s Log liga-se à tua própria caixa Smart-Boat e torna interruptores e consumidores a bordo controláveis à distância – atualmente em desenvolvimento ativo.',
+  },
+  guidesH2: { de: 'Anleitungen & Tutorials', en: 'Guides & Tutorials', es: 'Guías y Tutoriales', fr: 'Guides et Tutoriels', it: 'Guide e Tutorial', nl: 'Handleidingen & Tutorials', pt: 'Guias e Tutoriais' },
+  guidesDesc: {
+    de: 'Schritt-für-Schritt-Anleitungen, wie du Captain\'s Log mit deinen Bordinstrumenten verbindest – demnächst hier.',
+    en: 'Step-by-step guides on connecting Captain\'s Log to your onboard instruments – coming soon.',
+    es: 'Guías paso a paso para conectar Captain\'s Log con tus instrumentos de a bordo – próximamente aquí.',
+    fr: 'Guides pas à pas pour connecter Captain\'s Log à vos instruments de bord – bientôt disponibles ici.',
+    it: 'Guide passo-passo per collegare Captain\'s Log ai tuoi strumenti di bordo – prossimamente qui.',
+    nl: 'Stap-voor-stap handleidingen om Captain\'s Log met je boordinstrumenten te verbinden – binnenkort hier.',
+    pt: 'Guias passo a passo para ligar o Captain\'s Log aos teus instrumentos de bordo – brevemente aqui.',
+  },
+  ctaH2: { de: 'Bereit für dein digitales Logbuch?', en: 'Ready for your digital logbook?', es: '¿Listo para tu diario de a bordo digital?', fr: 'Prêt pour votre journal de bord numérique ?', it: 'Pronto per il tuo giornale di bordo digitale?', nl: 'Klaar voor jouw digitale logboek?', pt: 'Pronto para o teu diário de bordo digital?' },
+  ctaDesc: {
+    de: 'Kostenlos starten, jederzeit kündbar. Für Live-Tracking, auch offline auf See.',
+    en: 'Start for free, cancel anytime. For live tracking, even offline at sea.',
+    es: 'Empieza gratis, cancela cuando quieras. Para seguimiento en vivo, también sin conexión en el mar.',
+    fr: 'Commencez gratuitement, résiliable à tout moment. Pour le suivi en direct, même hors ligne en mer.',
+    it: 'Inizia gratis, disdici quando vuoi. Per il tracciamento live, anche offline in mare.',
+    nl: 'Start gratis, altijd opzegbaar. Voor live tracking, ook offline op zee.',
+    pt: 'Comece grátis, cancela quando quiseres. Para rastreamento em tempo real, mesmo offline no mar.',
+  },
+  footerImprint: { de: 'Impressum', en: 'Imprint', es: 'Aviso Legal', fr: 'Mentions Légales', it: 'Note Legali', nl: 'Colofon', pt: 'Informações Legais' },
+  footerPrivacy: { de: 'Datenschutz', en: 'Privacy Policy', es: 'Privacidad', fr: 'Confidentialité', it: 'Privacy', nl: 'Privacy', pt: 'Privacidade' },
+  footerManual: { de: 'Bedienungsanleitung', en: 'User Manual', es: 'Manual de Usuario', fr: 'Manuel d\'Utilisation', it: 'Manuale Utente', nl: 'Gebruikershandleiding', pt: 'Manual do Utilizador' },
+  footerContact: { de: 'Kontakt', en: 'Contact', es: 'Contacto', fr: 'Contact', it: 'Contatto', nl: 'Contact', pt: 'Contacto' },
+  footerTagline: {
+    de: 'Dein digitales Cockpit an Bord – Logbuch, Wartung und Sicherheit an einem Ort.',
+    en: 'Your digital cockpit on board – logbook, maintenance, and safety in one place.',
+    es: 'Tu cabina digital a bordo – diario, mantenimiento y seguridad en un solo lugar.',
+    fr: 'Votre cockpit numérique à bord – journal, entretien et sécurité au même endroit.',
+    it: 'Il tuo cockpit digitale a bordo – diario, manutenzione e sicurezza in un unico posto.',
+    nl: 'Jouw digitale cockpit aan boord – logboek, onderhoud en veiligheid op één plek.',
+    pt: 'O teu cockpit digital a bordo – diário, manutenção e segurança num só lugar.',
+  },
+  footerProductHeading: { de: 'Produkt', en: 'Product', es: 'Producto', fr: 'Produit', it: 'Prodotto', nl: 'Product', pt: 'Produto' },
+  footerLegalHeading: { de: 'Rechtliches', en: 'Legal', es: 'Legal', fr: 'Mentions légales', it: 'Note legali', nl: 'Juridisch', pt: 'Legal' },
+};
+(function () {
+  var tplEl = document.getElementById('tpl');
+  var appEl = document.getElementById('app');
+  var template = tplEl.textContent;
+  var SUPPORTED = ['de','en','es','fr','it','nl','pt'];
+  var state = { lang: (function(){
+    try {
+      var saved = localStorage.getItem('cl_lang');
+      return (saved && SUPPORTED.indexOf(saved) !== -1) ? saved : 'de';
+    } catch(e) { return 'de'; }
+  })() };
+
+  function render() {
+    var lang = state.lang;
+    var html = template.replace(/\{\{(\w+)\}\}/g, function (m, key) {
+      if (key === 'lang') return lang;
+      var entry = T[key];
+      if (!entry) return '';
+      return entry[lang] || entry.de || '';
+    });
+    appEl.innerHTML = html;
+    var sel = appEl.querySelector('.lang-select');
+    if (sel) sel.value = lang;
+    document.documentElement.setAttribute('lang', lang);
+  }
+
+  appEl.addEventListener('change', function (e) {
+    if (e.target && e.target.classList.contains('lang-select')) {
+      state.lang = e.target.value;
+      try { localStorage.setItem('cl_lang', state.lang); } catch (e) {}
+      render();
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
