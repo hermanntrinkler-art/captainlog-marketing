@@ -385,6 +385,7 @@
       <div>
         <h3 style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: hsl(32 75% 40%); margin-bottom: 18px;">{{statusNextHeading}}</h3>
         <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px;">
+          <li style="display: flex; gap: 10px; font-size: 14.5px; line-height: 1.55; color: var(--foreground);"><span style="color: hsl(32 80% 48%); flex-shrink: 0;">&#8226;</span>{{statusNextItemRemote}}</li>
           <li style="display: flex; gap: 10px; font-size: 14.5px; line-height: 1.55; color: var(--foreground);"><span style="color: hsl(32 80% 48%); flex-shrink: 0;">&#8226;</span>{{statusNextItem2}}</li>
           <li style="display: flex; gap: 10px; font-size: 14.5px; line-height: 1.55; color: var(--foreground);"><span style="color: hsl(32 80% 48%); flex-shrink: 0;">&#8226;</span>{{statusNextItem3}}</li>
           <li style="display: flex; gap: 10px; font-size: 14.5px; line-height: 1.55; color: var(--foreground);"><span style="color: hsl(32 80% 48%); flex-shrink: 0;">&#8226;</span>{{statusNextItem4}}</li>
@@ -761,6 +762,15 @@ const T = {
     it: 'Ora, data e posizione GPS in tempo reale nell\'intestazione del centro di controllo',
     nl: 'Tijd, datum en GPS-positie live in de kopregel van het controlecentrum',
     pt: 'Hora, data e posição GPS em tempo real no cabeçalho do centro de controlo',
+  },
+  statusNextItemRemote: {
+    de: 'Fernzugriff von unterwegs oder zuhause – prüfen, ob die Bilgepumpe aus ist oder die Luke zu ist, auch wenn du nicht an Bord bist. Geplant als optionales Zubehör zum Dazukaufen, das die Verbindung zwischen Boot und Internet herstellt.',
+    en: 'Remote access from wherever you are – check whether the bilge pump is off or the hatch is closed, even when you\'re not on board. Planned as an optional add-on you can purchase that bridges the boat to the internet.',
+    es: 'Acceso remoto desde donde estés – comprueba si la bomba de sentina está apagada o la escotilla cerrada, aunque no estés a bordo. Previsto como accesorio opcional que puedes comprar y que conecta el barco a internet.',
+    fr: 'Accès à distance où que vous soyez – vérifiez si la pompe de cale est éteinte ou le panneau fermé, même sans être à bord. Prévu comme accessoire optionnel à acheter, reliant le bateau à internet.',
+    it: 'Accesso remoto da ovunque tu sia – controlla se la pompa di sentina è spenta o il boccaporto chiuso, anche senza essere a bordo. Previsto come accessorio opzionale da acquistare, che collega la barca a internet.',
+    nl: 'Toegang op afstand vanaf elke locatie – controleer of de lenspomp uitstaat of de luik dicht is, ook als je niet aan boord bent. Gepland als optioneel accessoire dat je kunt kopen en de boot met internet verbindt.',
+    pt: 'Acesso remoto de qualquer lugar – verifica se a bomba de porão está desligada ou a escotilha fechada, mesmo sem estares a bordo. Previsto como acessório opcional para comprar, que liga o barco à internet.',
   },
   statusNextItem2: {
     de: 'Kacheln mit Messwerten statt nur Ein/Aus, zum Beispiel für Ladezustand oder Verbrauch',
