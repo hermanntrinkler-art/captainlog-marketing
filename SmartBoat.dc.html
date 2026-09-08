@@ -146,13 +146,13 @@
       {{heroSubtitle}}
     </p>
     <div style="display: flex; gap: 12px; margin-top: 34px; flex-wrap: wrap; justify-content: center;">
-      <a href="https://app.captainlog.pro/" class="store-badge">
+      <div class="store-badge" style="opacity: 0.55; cursor: default; pointer-events: none;">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="hsl(200 89% 22%)"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8.98-.19 1.93-.87 2.95-.79 1.42.11 2.4.67 3.05 1.6-2.68 1.63-2.03 5.5.62 6.55-.5 1.31-1.14 2.6-1.7 4.81zM12.03 7.25c-.15-2.23 1.66-4.09 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
         <div style="line-height: 1.15; text-align: left;">
-          <div style="font-size: 10px; color: hsl(200 30% 40%);">{{badgeDownloadOn}}</div>
+          <div style="font-size: 10px; color: hsl(200 30% 40%);">{{badgeComingSoon}}</div>
           <div style="font-size: 15px; font-weight: 700; color: hsl(200 89% 18%);">App Store</div>
         </div>
-      </a>
+      </div>
       <a href="https://play.google.com/store/apps/details?id=com.harborstudios.captainslog" class="store-badge">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3.6 2.9c-.4.3-.6.8-.6 1.4v15.4c0 .6.2 1.1.6 1.4l.1.1L13 12v-.2L3.7 2.8l-.1.1z" fill="#00a6c7"/><path d="M16.1 15 13 12v-.2l3.1-3.1 3.5 2c1 .6 1 1.5 0 2.1z" fill="#e0a800"/><path d="M13 12l3.1 3-9.5 5.4c-.5.3-1 .3-1.4 0z" fill="#d6303a"/><path d="M13 12 3.6 2.9c.4-.3.9-.3 1.4 0L16.1 9z" fill="#1fa855"/></svg>
         <div style="line-height: 1.15; text-align: left;">
@@ -287,7 +287,6 @@
       </div>
 
     </div>
-    <p style="font-size: 13.5px; line-height: 1.6; color: var(--muted-foreground); text-align: center; max-width: 620px; margin: 36px auto 0; padding: 16px 20px; background: var(--muted); border-radius: var(--r-md);">{{connNote}}</p>
   </div>
 </section>
 
@@ -386,7 +385,6 @@
       <div>
         <h3 style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: hsl(32 75% 40%); margin-bottom: 18px;">{{statusNextHeading}}</h3>
         <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px;">
-          <li style="display: flex; gap: 10px; font-size: 14.5px; line-height: 1.55; color: var(--foreground);"><span style="color: hsl(32 80% 48%); flex-shrink: 0;">&#8226;</span>{{statusNextItem1}}</li>
           <li style="display: flex; gap: 10px; font-size: 14.5px; line-height: 1.55; color: var(--foreground);"><span style="color: hsl(32 80% 48%); flex-shrink: 0;">&#8226;</span>{{statusNextItem2}}</li>
           <li style="display: flex; gap: 10px; font-size: 14.5px; line-height: 1.55; color: var(--foreground);"><span style="color: hsl(32 80% 48%); flex-shrink: 0;">&#8226;</span>{{statusNextItem3}}</li>
           <li style="display: flex; gap: 10px; font-size: 14.5px; line-height: 1.55; color: var(--foreground);"><span style="color: hsl(32 80% 48%); flex-shrink: 0;">&#8226;</span>{{statusNextItem4}}</li>
@@ -395,9 +393,18 @@
         </ul>
       </div>
     </div>
-    <p style="font-size: 15px; line-height: 1.65; color: var(--muted-foreground); margin-top: 48px; max-width: 560px; margin-left: auto; margin-right: auto; text-align: center;">
-      {{statusDesc}}
-    </p>
+    <div style="margin-top: 48px; max-width: 480px; margin-left: auto; margin-right: auto; text-align: center;">
+      <p style="font-size: 15px; line-height: 1.65; color: var(--muted-foreground);">
+        {{statusDesc}}
+      </p>
+      <form class="newsletter-form" style="display: flex; gap: 10px; justify-content: center; margin-top: 22px; flex-wrap: wrap;">
+        <input type="email" required placeholder="{{newsletterPlaceholder}}" style="height: 46px; padding: 0 16px; border-radius: var(--r-md); border: 1px solid var(--border); font-size: 14px; min-width: 220px; flex: 1 1 220px; max-width: 300px; background: var(--card); color: var(--foreground);">
+        <button type="submit" class="btn btn-primary">{{newsletterButton}}</button>
+      </form>
+      <p class="newsletter-success" style="display: none; font-size: 14px; color: hsl(150 55% 32%); margin-top: 14px; font-weight: 600;">{{newsletterSuccess}}</p>
+      <p class="newsletter-already" style="display: none; font-size: 14px; color: var(--muted-foreground); margin-top: 14px;">{{newsletterAlready}}</p>
+      <p class="newsletter-error" style="display: none; font-size: 14px; color: hsl(0 65% 45%); margin-top: 14px;">{{newsletterError}}</p>
+    </div>
   </div>
 </section>
 
@@ -408,13 +415,13 @@
     <h2 style="font-size: 30px; font-weight: 800; color: #fff;">{{ctaH2}}</h2>
     <p style="font-size: 15.5px; color: hsl(200 25% 85%); margin-top: 12px;">{{ctaDesc}}</p>
     <div style="display: flex; gap: 12px; justify-content: center; margin-top: 32px; flex-wrap: wrap;">
-      <a href="https://app.captainlog.pro/" class="store-badge dark">
+      <div class="store-badge dark" style="opacity: 0.55; cursor: default; pointer-events: none;">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8.98-.19 1.93-.87 2.95-.79 1.42.11 2.4.67 3.05 1.6-2.68 1.63-2.03 5.5.62 6.55-.5 1.31-1.14 2.6-1.7 4.81zM12.03 7.25c-.15-2.23 1.66-4.09 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
         <div style="line-height: 1.15; text-align: left;">
-          <div style="font-size: 10px; color: hsl(0 0% 100% / 0.7);">{{badgeDownloadOn}}</div>
+          <div style="font-size: 10px; color: hsl(0 0% 100% / 0.7);">{{badgeComingSoon}}</div>
           <div style="font-size: 15px; font-weight: 700; color: #fff;">App Store</div>
         </div>
-      </a>
+      </div>
       <a href="https://play.google.com/store/apps/details?id=com.harborstudios.captainslog" class="store-badge dark">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3.6 2.9c-.4.3-.6.8-.6 1.4v15.4c0 .6.2 1.1.6 1.4l.1.1L13 12v-.2L3.7 2.8l-.1.1z" fill="#00d4ff"/><path d="M16.1 15 13 12v-.2l3.1-3.1 3.5 2c1 .6 1 1.5 0 2.1z" fill="#ffcf00"/><path d="M13 12l3.1 3-9.5 5.4c-.5.3-1 .3-1.4 0z" fill="#ff3a44"/><path d="M13 12 3.6 2.9c.4-.3.9-.3 1.4 0L16.1 9z" fill="#00e676"/></svg>
         <div style="line-height: 1.15; text-align: left;">
@@ -488,7 +495,7 @@ const T = {
     nl: 'Vereist slimme schakelaars aan boord – details hieronder.',
     pt: 'Requer interruptores inteligentes a bordo – detalhes abaixo.',
   },
-  badgeDownloadOn: { de: 'Laden im', en: 'Download on the', es: 'Disponible en', fr: 'Disponible sur', it: 'Disponibile su', nl: 'Beschikbaar in de', pt: 'Disponível na' },
+  badgeComingSoon: { de: 'Bald verfügbar', en: 'Coming soon', es: 'Próximamente', fr: 'Bientôt disponible', it: 'Prossimamente', nl: 'Binnenkort', pt: 'Brevemente' },
   badgeGetOn: { de: 'Jetzt bei', en: 'Get it on', es: 'Disponible en', fr: 'Disponible sur', it: 'Disponibile su', nl: 'Beschikbaar op', pt: 'Disponível no' },
   section1H2: {
     de: 'Was Smart-Boat kann',
@@ -628,15 +635,6 @@ const T = {
     nl: 'Elk schakelcommando krijgt een bevestiging van de daadwerkelijk bereikte status, in plaats van blind aan te nemen dat het is aangekomen. Is een apparaat niet bereikbaar, dan zie je dat meteen in plaats van een onterecht "aan".',
     pt: 'Cada comando de comutação recebe uma confirmação do estado realmente alcançado, em vez de assumir cegamente que chegou. Se um dispositivo não estiver acessível, vês isso de imediato em vez de um falso "ligado".',
   },
-  connNote: {
-    de: 'Aktuell werden nur Geräte ohne Passwortschutz unterstützt (Werkszustand). Unterstützung für passwortgeschützte Geräte ist für eine spätere Version geplant.',
-    en: 'Currently only devices without password protection are supported (factory state). Support for password-protected devices is planned for a later version.',
-    es: 'Actualmente solo se admiten dispositivos sin protección por contraseña (estado de fábrica). El soporte para dispositivos protegidos por contraseña está previsto para una versión posterior.',
-    fr: 'Seuls les appareils sans protection par mot de passe sont actuellement pris en charge (état d\'usine). La prise en charge des appareils protégés par mot de passe est prévue pour une version ultérieure.',
-    it: 'Al momento sono supportati solo i dispositivi senza protezione tramite password (stato di fabbrica). Il supporto per i dispositivi protetti da password è previsto per una versione successiva.',
-    nl: 'Momenteel worden alleen apparaten zonder wachtwoordbeveiliging ondersteund (fabrieksinstelling). Ondersteuning voor wachtwoordbeveiligde apparaten is gepland voor een latere versie.',
-    pt: 'Atualmente só são suportados dispositivos sem proteção por palavra-passe (estado de fábrica). O suporte para dispositivos protegidos por palavra-passe está previsto para uma versão posterior.',
-  },
   techH2: { de: 'Technische Daten', en: 'Technical Details', es: 'Datos Técnicos', fr: 'Caractéristiques Techniques', it: 'Dati Tecnici', nl: 'Technische Gegevens', pt: 'Dados Técnicos' },
   techNote: {
     de: 'Vorläufige Angaben – Smart-Boat ist in aktiver Entwicklung, Details werden bis zum Marktstart final bestätigt.',
@@ -689,13 +687,13 @@ const T = {
   },
   spec5Label: { de: 'Sicherheit', en: 'Security', es: 'Seguridad', fr: 'Sécurité', it: 'Sicurezza', nl: 'Beveiliging', pt: 'Segurança' },
   spec5Value: {
-    de: 'Aktuell nur Geräte ohne Passwortschutz (Auslieferungszustand)',
-    en: 'Currently only devices without password protection (factory state)',
-    es: 'Actualmente solo dispositivos sin protección por contraseña (estado de fábrica)',
-    fr: 'Actuellement uniquement les appareils sans protection par mot de passe (état d\'usine)',
-    it: 'Al momento solo dispositivi senza protezione da password (stato di fabbrica)',
-    nl: 'Momenteel alleen apparaten zonder wachtwoordbeveiliging (fabrieksinstelling)',
-    pt: 'Atualmente apenas dispositivos sem proteção por palavra-passe (estado de fábrica)',
+    de: 'Zugriff nur über dein passwortgeschütztes Captain\'s Log-Konto',
+    en: 'Access only through your password-protected Captain\'s Log account',
+    es: 'Acceso solo a través de tu cuenta protegida con contraseña de Captain\'s Log',
+    fr: 'Accès uniquement via votre compte Captain\'s Log protégé par mot de passe',
+    it: 'Accesso solo tramite il tuo account Captain\'s Log protetto da password',
+    nl: 'Toegang alleen via jouw wachtwoordbeveiligde Captain\'s Log-account',
+    pt: 'Acesso apenas através da tua conta Captain\'s Log protegida por palavra-passe',
   },
   spec6Label: { de: 'Dashboard', en: 'Dashboard', es: 'Panel', fr: 'Tableau de bord', it: 'Cruscotto', nl: 'Dashboard', pt: 'Painel' },
   spec6Value: {
@@ -764,15 +762,6 @@ const T = {
     nl: 'Tijd, datum en GPS-positie live in de kopregel van het controlecentrum',
     pt: 'Hora, data e posição GPS em tempo real no cabeçalho do centro de controlo',
   },
-  statusNextItem1: {
-    de: 'Unterstützung für passwortgeschützte Geräte',
-    en: 'Support for password-protected devices',
-    es: 'Compatibilidad con dispositivos protegidos por contraseña',
-    fr: 'Prise en charge des appareils protégés par mot de passe',
-    it: 'Supporto per dispositivi protetti da password',
-    nl: 'Ondersteuning voor wachtwoordbeveiligde apparaten',
-    pt: 'Suporte para dispositivos protegidos por palavra-passe',
-  },
   statusNextItem2: {
     de: 'Kacheln mit Messwerten statt nur Ein/Aus, zum Beispiel für Ladezustand oder Verbrauch',
     en: 'Tiles showing readings instead of just on/off, for example charge level or consumption',
@@ -819,13 +808,58 @@ const T = {
     pt: 'Disponibilidade geral – o Smart-Boat funciona atualmente em fase de teste interno',
   },
   statusDesc: {
-    de: 'Smart-Boat ist aktuell in aktiver Entwicklung und läuft im internen Testbetrieb. Möchtest du früh dabei sein oder hast Fragen zur Einrichtung? Melde dich über Captain\'s Log – wir halten dich auf dem Laufenden.',
-    en: 'Smart-Boat is currently in active development and running as an internal test. Want to be an early adopter or have questions about setting it up? Get in touch via Captain\'s Log – we\'ll keep you posted.',
-    es: 'Smart-Boat está actualmente en desarrollo activo y en pruebas internas. ¿Quieres ser de los primeros en probarlo o tienes preguntas sobre la configuración? Contacta a través de Captain\'s Log – te mantendremos informado.',
-    fr: 'Smart-Boat est actuellement en développement actif et en test interne. Vous souhaitez être parmi les premiers utilisateurs ou avez des questions sur la configuration ? Contactez-nous via Captain\'s Log – nous vous tiendrons informé.',
-    it: 'Smart-Boat è attualmente in sviluppo attivo e in fase di test interno. Vuoi essere tra i primi a provarlo o hai domande sulla configurazione? Contattaci tramite Captain\'s Log – ti terremo aggiornato.',
-    nl: 'Smart-Boat is momenteel in actieve ontwikkeling en draait in interne testfase. Wil je er vroeg bij zijn of heb je vragen over het instellen? Neem contact op via Captain\'s Log – we houden je op de hoogte.',
-    pt: 'O Smart-Boat encontra-se atualmente em desenvolvimento ativo e em fase de teste interno. Queres ser dos primeiros a experimentar ou tens perguntas sobre a configuração? Contacta-nos através do Captain\'s Log – manter-te-emos informado.',
+    de: 'Smart-Boat ist aktuell in aktiver Entwicklung und läuft im internen Testbetrieb. Trag dich hier ein, um zu erfahren, wenn es für alle verfügbar ist:',
+    en: 'Smart-Boat is currently in active development and running as an internal test. Sign up here to hear when it becomes available for everyone:',
+    es: 'Smart-Boat está actualmente en desarrollo activo y en pruebas internas. Regístrate aquí para saber cuándo estará disponible para todos:',
+    fr: 'Smart-Boat est actuellement en développement actif et en test interne. Inscrivez-vous ici pour être informé de sa disponibilité pour tous :',
+    it: 'Smart-Boat è attualmente in sviluppo attivo e in fase di test interno. Iscriviti qui per sapere quando sarà disponibile per tutti:',
+    nl: 'Smart-Boat is momenteel in actieve ontwikkeling en draait in interne testfase. Meld je hier aan om te horen wanneer het voor iedereen beschikbaar is:',
+    pt: 'O Smart-Boat encontra-se atualmente em desenvolvimento ativo e em fase de teste interno. Inscreve-te aqui para saberes quando fica disponível para todos:',
+  },
+  newsletterPlaceholder: {
+    de: 'Deine E-Mail-Adresse',
+    en: 'Your email address',
+    es: 'Tu correo electrónico',
+    fr: 'Votre adresse e-mail',
+    it: 'La tua email',
+    nl: 'Jouw e-mailadres',
+    pt: 'O teu email',
+  },
+  newsletterButton: {
+    de: 'Benachrichtigen',
+    en: 'Notify me',
+    es: 'Avisarme',
+    fr: 'M\'avertir',
+    it: 'Avvisami',
+    nl: 'Informeer mij',
+    pt: 'Avisar-me',
+  },
+  newsletterSuccess: {
+    de: 'Fast geschafft: Bitte bestätige die Anmeldung über den Link in deiner E-Mail.',
+    en: 'Almost done: please confirm your signup via the link in your email.',
+    es: 'Casi listo: confirma tu registro con el enlace que te hemos enviado por correo.',
+    fr: 'Presque terminé : confirmez votre inscription via le lien reçu par e-mail.',
+    it: 'Quasi fatto: conferma l\'iscrizione tramite il link nella tua email.',
+    nl: 'Bijna klaar: bevestig je aanmelding via de link in je e-mail.',
+    pt: 'Quase pronto: confirma a tua inscrição através do link no teu email.',
+  },
+  newsletterAlready: {
+    de: 'Diese E-Mail-Adresse ist bereits angemeldet.',
+    en: 'This email address is already signed up.',
+    es: 'Este correo ya está registrado.',
+    fr: 'Cette adresse e-mail est déjà inscrite.',
+    it: 'Questa email è già iscritta.',
+    nl: 'Dit e-mailadres is al aangemeld.',
+    pt: 'Este email já está inscrito.',
+  },
+  newsletterError: {
+    de: 'Da ist etwas schiefgelaufen. Bitte versuch es später erneut.',
+    en: 'Something went wrong. Please try again later.',
+    es: 'Algo salió mal. Inténtalo de nuevo más tarde.',
+    fr: 'Une erreur est survenue. Veuillez réessayer plus tard.',
+    it: 'Qualcosa è andato storto. Riprova più tardi.',
+    nl: 'Er ging iets mis. Probeer het later opnieuw.',
+    pt: 'Algo correu mal. Tenta novamente mais tarde.',
   },
   ctaH2: { de: 'Jetzt Captain\'s Log laden', en: 'Get Captain\'s Log now', es: 'Obtén Captain\'s Log ahora', fr: 'Téléchargez Captain\'s Log maintenant', it: 'Scarica subito Captain\'s Log', nl: 'Download Captain\'s Log nu', pt: 'Obtém já o Captain\'s Log' },
   ctaDesc: { de: 'Kostenlos starten, jederzeit kündbar.', en: 'Start for free, cancel anytime.', es: 'Empieza gratis, cancela cuando quieras.', fr: 'Commencez gratuitement, résiliable à tout moment.', it: 'Inizia gratis, disdici quando vuoi.', nl: 'Start gratis, altijd opzegbaar.', pt: 'Começa grátis, cancela quando quiseres.' },

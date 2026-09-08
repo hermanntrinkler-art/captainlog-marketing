@@ -54,6 +54,58 @@ RUNTIME_JS = """
     }
   });
 
+  // Newsletter signup (used on pages that include a form.newsletter-form).
+  // Calls the same public Supabase edge function the app itself uses;
+  // this anon key is meant to be public and is already shipped in the app's
+  // own client bundle.
+  var NEWSLETTER_URL = 'https://qetkfoorfegjjycblokn.supabase.co/functions/v1/newsletter-signup';
+  var NEWSLETTER_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFldGtmb29yZmVnamp5Y2Jsb2tuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxNzU5MTksImV4cCI6MjA3NDc1MTkxOX0.FPnVji3DBgc8avs0Btjmb3wYluYfeJfpIQdR48brd1U';
+
+  appEl.addEventListener('submit', function (e) {
+    var form = e.target;
+    if (!form || !form.classList || !form.classList.contains('newsletter-form')) return;
+    e.preventDefault();
+
+    var wrap = form.parentElement;
+    var successEl = wrap ? wrap.querySelector('.newsletter-success') : null;
+    var alreadyEl = wrap ? wrap.querySelector('.newsletter-already') : null;
+    var errorEl = wrap ? wrap.querySelector('.newsletter-error') : null;
+    [successEl, alreadyEl, errorEl].forEach(function (el) { if (el) el.style.display = 'none'; });
+
+    var input = form.querySelector('input[type="email"]');
+    var btn = form.querySelector('button');
+    var email = input ? input.value.trim() : '';
+    if (!email) return;
+
+    if (btn) btn.disabled = true;
+    fetch(NEWSLETTER_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': NEWSLETTER_KEY,
+        'Authorization': 'Bearer ' + NEWSLETTER_KEY
+      },
+      body: JSON.stringify({ email: email, locale: state.lang })
+    })
+      .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+      .then(function (res) {
+        if (res.ok && res.data && res.data.status === 'already_subscribed') {
+          if (alreadyEl) alreadyEl.style.display = 'block';
+        } else if (res.ok) {
+          if (successEl) successEl.style.display = 'block';
+          form.style.display = 'none';
+        } else {
+          throw new Error('newsletter signup failed');
+        }
+      })
+      .catch(function () {
+        if (errorEl) errorEl.style.display = 'block';
+      })
+      .then(function () {
+        if (btn) btn.disabled = false;
+      });
+  });
+
   render();
 })();
 """.strip()
@@ -117,6 +169,6 @@ for src, out, title in PAGES:
 
 # copy image assets alongside
 import shutil
-for img in ["logo-icon.png"]:
+for img in ["logo-icon.png", "smartboat-product.jpg"]:
     shutil.copy(os.path.join(SRC_DIR, img), os.path.join(OUT_DIR, img))
     print("copied", img)
